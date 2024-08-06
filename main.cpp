@@ -2,6 +2,15 @@
 #include <random>
 #include <ctime>
 
+
+//Struct for init particles
+struct Sol {
+  std::vector<std::vector<bool>> particles;
+  std::vector<bool> g_best;
+  double g_best_fitness;
+  std::vector<double> p_best_fitness;
+};
+
 // generate random number
 bool generate_random_value_0_or_1(int seed, int probability)
 {
@@ -34,8 +43,11 @@ void print_particle(std::vector<bool> p)
 }
 
 // Here we define the init_particles function
-std::vector<std::vector<bool>> init_particles(int nb_particles, int dim)
+Sol init_particles(int nb_particles, int dim)
 {
+  Sol init_solution;
+
+
   std::vector<std::vector<bool>> particles;
   for (int i = 0; i < nb_particles; i++)
   {
@@ -48,17 +60,24 @@ std::vector<std::vector<bool>> init_particles(int nb_particles, int dim)
     }
     particles.push_back(p);
   }
-  return particles;
+
+  init_solution.particles = particles;
+  return init_solution;
 }
 
 // run function
-void run()
+void run(int dim,int nb_objects, int values[], int capacities[], int *weights)
 {
-  std::vector<std::vector<bool>> particles = init_particles(5, 20);
-  print_particle(particles[0]);
+  Sol init_solution = init_particles(5, 20);
+  print_particle(init_solution.particles[0]);
 }
 
 int main()
 {
-  run();
+  int dim = 2;
+  int nb_obj = 3;
+  int values[3] = {};
+  int capacities[2] = {8, 7};
+  int weights[3][2] = {{3, 2}, {5, 4}, {4, 3}};
+  run(dim, nb_obj,values, capacities, *weights);
 }
