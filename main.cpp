@@ -46,7 +46,8 @@ void print_particle(std::vector<bool> p)
 Sol init_particles(int nb_particles, int dim)
 {
   Sol init_solution;
-
+  double g_best_fitness;
+  std::vector<double> p_best_fitness;
 
   std::vector<std::vector<bool>> particles;
   for (int i = 0; i < nb_particles; i++)
@@ -57,7 +58,10 @@ Sol init_particles(int nb_particles, int dim)
 
       bool r = generate_random_value_0_or_1(j, 80);
       p.push_back(r);
-    }
+    } // here we have genrated a particle
+
+
+
     particles.push_back(p);
   }
 
