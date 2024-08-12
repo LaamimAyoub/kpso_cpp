@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <iostream>
 #include <random>
 #include <ctime>
 
@@ -60,8 +60,6 @@ Sol init_particles(int nb_particles, int dim)
       p.push_back(r);
     } // here we have genrated a particle
 
-
-
     particles.push_back(p);
   }
 
@@ -74,6 +72,15 @@ void run(int dim,int nb_objects, int values[], int capacities[], int *weights)
 {
   Sol init_solution = init_particles(5, 20);
   print_particle(init_solution.particles[0]);
+  print_particle(init_solution.g_best);
+
+  std::cout << init_solution.g_best_fitness << std::endl;
+  std::cout << "p_best_values";
+  for (int i=0; i < init_solution.p_best_fitness.size(); i++){
+    std::cout << "p_best at position " << i << " " << init_solution.p_best_fitness[i] << std::endl; 
+  };
+  std::cout << std::endl;
+  std::cout << "end running" << std::endl;
 }
 
 int main()
