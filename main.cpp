@@ -7,15 +7,15 @@
 struct Sol {
   std::vector<std::vector<bool>> particles;
   std::vector<bool> g_best;
-  double g_best_fitness;
-  std::vector<double> p_best_fitness;
+  int g_best_fitness;
+  std::vector<int> p_best_fitness;
 };
 
 // generate random number
 bool generate_random_value_0_or_1(int seed, int probability)
 {
   std::time_t t = std::time(0); // t is an integer type
-  seed = seed + t;
+  seed = seed *  t;
   srand(seed);                     // Seed with current time
 
   // Generate a random number between 0 and 99
@@ -42,53 +42,77 @@ void print_particle(std::vector<bool> p)
   std::cout << std::endl;
 }
 
+
+int fitness(std::vector<bool>& p, int values[]){
+  int total = 0;
+  for (int i=0; i< p.size(); i++){
+      int p_int = (int) p[i];
+      total += p[i] * values[i];
+  }
+  return total;
+}
+
+
+
 // Here we define the init_particles function
-Sol init_particles(int nb_particles, int dim)
+Sol init_particles(int nb_particles, int nb_obj, int values[])
 {
   Sol init_solution;
-  double g_best_fitness;
-  std::vector<double> p_best_fitness;
+  int g_best_fitness=0;
+  std::vector<int> p_best_fitness;
 
   std::vector<std::vector<bool>> particles;
+  int p_fitness;
+  std::vector<bool> g_best;
   for (int i = 0; i < nb_particles; i++)
   {
-    std::vector<bool> p;
-    for (int j = 0; j < dim; j++)
+    std::vector<bool> p = {};
+    for (int j = 0; j < nb_obj; j++)
     {
 
-      bool r = generate_random_value_0_or_1(j, 80);
+      bool r = generate_random_value_0_or_1(j*i, 50);
       p.push_back(r);
     } // here we have genrated a particle
 
     particles.push_back(p);
+
+    // get particle fitness
+    p_fitness = fitness(p, values);
+
+    p_best_fitness.push_back(p_fitness);
+
+    if (p_fitness > g_best_fitness){
+      g_best_fitness = p_fitness;
+      g_best = p;
+    }
+
   }
 
   init_solution.particles = particles;
+  init_solution.g_best = g_best;
+  init_solution.g_best_fitness = g_best_fitness;
+  init_solution.p_best_fitness = p_best_fitness;
   return init_solution;
 }
 
-// run function
-void run(int dim,int nb_objects, int values[], int capacities[], int *weights)
-{
-  Sol init_solution = init_particles(5, 20);
-  print_particle(init_solution.particles[0]);
-  print_particle(init_solution.g_best);
 
-  std::cout << init_solution.g_best_fitness << std::endl;
-  std::cout << "p_best_values";
-  for (int i=0; i < init_solution.p_best_fitness.size(); i++){
-    std::cout << "p_best at position " << i << " " << init_solution.p_best_fitness[i] << std::endl; 
-  };
-  std::cout << std::endl;
-  std::cout << "end running" << std::endl;
+// run function
+void run(int dim,int nb_objects, int values[], int capacities[], int *weights, int nb_particles)
+{
+  Sol init_solution = init_particles(nb_particles, nb_objects, values);
+
+  std::vector<bool> g_best =  init_solution.g_best;
+  print_particle(g_best);
 }
+
 
 int main()
 {
   int dim = 2;
   int nb_obj = 3;
-  int values[3] = {};
+  int nb_particles = 5;
+  int values[3] = {10, 11, 12};
   int capacities[2] = {8, 7};
   int weights[3][2] = {{3, 2}, {5, 4}, {4, 3}};
-  run(dim, nb_obj,values, capacities, *weights);
+  run(dim, nb_obj,values, capacities, *weights, nb_particles);
 }
